@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./login.css"; // Ensure the file exists in the same directory
+import { redirect } from "react-router-dom";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -26,9 +27,10 @@ const Login = () => {
 
       const data = await response.json();
       if (response.ok) {
-        alert(data.message);
+        //alert(data.message);
         // Redirect to the dashboard or other page
         // window.location.href = "/dashboard";
+        window.location.href = "/gooddeed";
       } else {
         alert(data.error || "Login failed.");
       }

@@ -77,7 +77,7 @@ app.post("/api/users", async (req, res) => {
 
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
-  console.log("Login-Request: " + req.body);
+  console.log("Login-Request: Username - " + req.body.username + " | Password - " + req.body.password);
   try {
     // Check if user exists in Firebase Authentication
     const userSnapshot = await db
@@ -93,7 +93,12 @@ app.post("/api/login", async (req, res) => {
     if (user.password !== password) {
       return res.status(400).json({ error: "Invalid username or password." });
     } else {
-      return res.status(200).json({ message: "Login successful!", UserId: userSnapshot.docs[0].id });
+      return res
+        .status(200)
+        .json({
+          message: "Login successful!",
+          UserId: userSnapshot.docs[0].id,
+        });
     }
 
     res.status(200).json({ message: "Login successful!" });
@@ -125,7 +130,6 @@ app.post("/api/kindness", async (req, res) => {
   }
 });
 
-
 app.post("/api/kindness", async (req, res) => {
   const { username, password } = req.body;
 
@@ -147,8 +151,6 @@ app.post("/api/kindness", async (req, res) => {
     res.status(500).json({ error: "An error occurred while logging in." });
   }
 });
-
-
 
 // Start the server
 app.listen(PORT, () => {
