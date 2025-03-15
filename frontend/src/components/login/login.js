@@ -1,15 +1,17 @@
-// JavaScript for Login Form Validation and Handling
-document.getElementById('loginForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent the form from submitting immediately
+import React, { useState } from "react";
+import "./login.css"; // Ensure the file exists in the same directory
 
-    // Get values from the form
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+const Login = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-    // Simple validation: Check if both fields are filled
-    if (username === '' || password === '') {
-        alert('Please fill in both username and password.');
-        return;
+  const handleSubmit = (event) => {
+    event.preventDefault(); // Prevent form from reloading the page
+
+    // Simple validation
+    if (username === "" || password === "") {
+      alert("Please fill in both username and password.");
+      return;
     }
 
     // Create user by calling the backend API

@@ -5,6 +5,11 @@ import { apiService } from './services/api';
 import logo from './logo.svg';
 import './App.css';
 
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/ui/navbar/Navbar";
+import Login from ".//components/login/login"
+import GoodDeed from "./components/gooddeed/gooddeed";
+
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -70,6 +75,13 @@ function App() {
 
   return (
     <div className="App">
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path="/login" element={<Login />}></Route>
+        <Route path="/gooddeed" element={<GoodDeed />} />
+      </Routes>
+    </Router>
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <h1>UNIHACK 2025 Project</h1>
@@ -113,6 +125,7 @@ function App() {
           </div>
         )}
       </header>
+
     </div>
   );
 }

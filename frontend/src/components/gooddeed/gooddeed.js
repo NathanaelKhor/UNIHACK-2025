@@ -3,7 +3,7 @@ import { Button } from "../ui/button/button";
 import { Card, CardContent } from "../ui/card/card";
 import "./gooddeed.css";
 
-const KindnessGenerator = () => {
+const GoodDeed = () => {
   const [kindness, setKindness] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -48,4 +48,4 @@ const KindnessGenerator = () => {
   );
 };
 
-export default KindnessGenerator;
+export default GoodDeed;
