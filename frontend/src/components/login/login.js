@@ -12,13 +12,26 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         return;
     }
 
-    // For demonstration, you can add any logic for successful login here
-    // For example, check if the username and password match a certain condition (hardcoded example)
-    if (username === 'admin' && password === '') {
-        alert('Login successful!');
-        // Redirect to a new page or perform other actions
-        // window.location.href = 'dashboard.html'; // Uncomment to redirect to another page
-    } else {
-        alert('Incorrect username or password.');
-    }
+    // Create user by calling the backend API
+    fetch('http://localhost:5001/api/users', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert('Error creating user: ' + data.error);
+        } else {
+            alert('User created successfully!');
+            // Redirect to a new page or perform other actions
+            // window.location.href = 'dashboard.html'; // Uncomment to redirect to another page
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while creating the user.');
+    });
 });
