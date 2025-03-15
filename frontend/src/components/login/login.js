@@ -1,24 +1,55 @@
-// JavaScript for Login Form Validation and Handling
-document.getElementById('loginForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent the form from submitting immediately
+import React, { useState } from "react";
+import "./login.css"; // Ensure the file exists in the same directory
 
-    // Get values from the form
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+const Login = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-    // Simple validation: Check if both fields are filled
-    if (username === '' || password === '') {
-        alert('Please fill in both username and password.');
-        return;
+  const handleSubmit = (event) => {
+    event.preventDefault(); // Prevent form from reloading the page
+
+    // Simple validation
+    if (username === "" || password === "") {
+      alert("Please fill in both username and password.");
+      return;
     }
 
-    // For demonstration, you can add any logic for successful login here
-    // For example, check if the username and password match a certain condition (hardcoded example)
-    if (username === 'admin' && password === '') {
-        alert('Login successful!');
-        // Redirect to a new page or perform other actions
-        // window.location.href = 'dashboard.html'; // Uncomment to redirect to another page
+    // Basic authentication logic (for demo purposes)
+    if (username === "admin" && password === "password") {
+      alert("Login successful!");
+      // Redirect or handle successful login
+      // window.location.href = "/dashboard"; // Uncomment for redirection
     } else {
-        alert('Incorrect username or password.');
+      alert("Incorrect username or password.");
     }
-});
+  };
+
+  return (
+    <div className="login-container">
+      <div className="login-box">
+      <h2>Login</h2>
+      <form onSubmit={handleSubmit}>
+        <label>Username:</label>
+        <input
+          type="text"
+          id="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+
+        <label>Password:</label>
+        <input
+          type="password"
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <button type="submit">Login</button>
+      </form>
+      </div>
+    </div>
+  );
+};
+
+export default Login;

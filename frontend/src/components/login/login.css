@@ -1,39 +1,42 @@
-/* Set background image for the entire page */
-body, html {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: Arial, sans-serif;
-    background-image: url('ButterButter-bg.png'); /* Background image for the whole page */
-    background-size: cover;  /* Make sure the image covers the entire page */
-    background-position: center; /* Center the image */
-    background-repeat: no-repeat; /* Prevent repeating the image */
-}
+
 
 /* Container that holds the form */
-.form-container {
-    background-image: url('background-form.jpg'); /* Background image specifically for the form */
+.login-container {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    width: 100vw;
+    background-image: url('ButterButter-bg.png'); /* Background image specifically for the form */
     background-size: cover; /* Ensure the form background image covers the container */
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Prevent the image from repeating */
     border-radius: 10px; /* Optional: rounded corners for the form container */
-    padding: 40px;
-    width: 300px; /* Set a fixed width for the form container */
-    text-align: center;
 }
-
+.login-box {
+    justify-content: center;
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 300px; /* Adjust width */
+  }
 form {
+    display: flex;
+    flex-direction: column;
     border: 1px solid #ccc;
     padding: 20px;
     border-radius: 5px;
     background-color: rgba(255, 255, 255, 0.8); /* Optional: semi-transparent background for form */
+    text-align: center;
+    justify-content: center;
 }
 
 label, input, button {
     display: block;
     margin: 10px 0;
+    justify-content: center;
+    text-align: center;
 }
 
 /* Styling the <h2> */
