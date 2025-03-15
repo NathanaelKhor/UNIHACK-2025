@@ -123,10 +123,10 @@ app.post("/api/kindness", async (req, res) => {
 
 
 app.post("/api/kindness", async (req, res) => {
-  const { username, password } = req.body;
 
   try {
     // Check if user exists in Firebase Authentication
+    
     const userRecord = await admin.auth().getUserByEmail(username); // You can use email as username in Firebase
     if (!userRecord) {
       return res.status(404).json({ error: "User not found." });
