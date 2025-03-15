@@ -93,6 +93,27 @@ const authenticateUser = async (req, res, next) => {
   }
 };
 
+// Create user endpoint
+app.post('/api/users', async (req, res) => {
+  const { username, password } = req.body;
+
+  if (typeof username !== "string" || typeof password !== "string") {
+    return res.status(400).json({ error: "Username and password must be strings." });
+  }
+
+  try {
+    const userRef = db.collection('users').doc();
+    await userRef.set({
+      username,
+      password,
+      createdAt: new Date()
+    });
+    res.status(201).json({ message: 'User created successfully', userId: userRef.id });
+  } catch (error) {
+    res.status(500).json({ error: 'Error creating user', details: error.message });
+  }
+});
+
 // Public routes
 app.get('/api/health', (req, res) => {
   console.log('Health check endpoint accessed');
