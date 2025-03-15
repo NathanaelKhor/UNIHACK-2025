@@ -84,7 +84,7 @@ function App() {
         <Route path="/gooddeed" element={<GoodDeed />} />
       </Routes>
     </Router>
-      <header className="App-header">
+      {/* <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <h1>UNIHACK 2025 Project</h1>
         
@@ -126,7 +126,7 @@ function App() {
             <p><strong>Creation Time:</strong> {user.metadata?.creationTime}</p>
           </div>
         )}
-      </header>
+      </header> */}
 
     </div>
   );
