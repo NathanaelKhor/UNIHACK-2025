@@ -1,11 +1,12 @@
 import React, { useState } from "react"; // Import React and useState for state management
 import "./Navbar.css"; // Import external CSS for styling
-import logo from "../../assets/logo.png"; // Import the logo image
+import logo from "../../assets/linelogo.png"; // Import the logo image
 
 const Navbar = () => {
     // State to track whether the mobile menu is open or closed
     const [menuOpen, setMenuOpen] = useState(false);
 
+    
     return (
         <nav className="navbar">
             {/* Logo section - clicking on it redirects to home */}
@@ -17,11 +18,7 @@ const Navbar = () => {
 
             {/* Navigation Links */}
             <ul className={`nav-links ${menuOpen ? "active" : ""}`}>
-                <li><a href="/">Home</a></li>
                 <li><a href="/login">Login</a></li>
-                <li><a href="#">Services</a></li>
-                <li><a href="#">Contact</a></li>
-                <li><a href="/register">Register</a></li>
             </ul>
 
             {/* Hamburger Menu Icon for Mobile View */}
