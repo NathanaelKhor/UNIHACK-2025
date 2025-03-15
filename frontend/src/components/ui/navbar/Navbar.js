@@ -1,7 +1,7 @@
 import React, { useState } from "react"; // Import React and useState for state management
 import "./Navbar.css"; // Import external CSS for styling
 import logo from "../../assets/linelogo.png"; // Import the logo image
-
+  
 const Navbar = () => {
     // State to track whether the mobile menu is open or closed
     const [menuOpen, setMenuOpen] = useState(false);
