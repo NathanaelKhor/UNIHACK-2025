@@ -6,7 +6,9 @@
     justify-content: center;
     text-align: center;
     width: 100vw;
-    background-image: url('ButterButter-bg.png'); /* Background image specifically for the form */
+
+    
+    background-image: url('background.png');  /* Background image specifically for the form */
     background-size: cover; /* Ensure the form background image covers the container */
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Prevent the image from repeating */
