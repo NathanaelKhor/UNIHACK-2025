@@ -4,10 +4,17 @@ import { Card, CardContent } from "../ui/card/card";
 import "./gooddeed.css";
 
 const GoodDeed = () => {
+  // Declaring some variables, and their setters
+
+  // TODO: get the streak of user from database
+  // const [streak, setStreak] = useState(<streak of user>)
+
+  
   const [kindness, setKindness] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // This code tries to get the kindness from backend api
   const fetchKindness = async () => {
     setLoading(true);
     setError(null);
@@ -29,6 +36,11 @@ const GoodDeed = () => {
     fetchKindness();
   }, []);
 
+
+const addStreak = () => {
+
+}
+
   return (
     <div className="container">
       <Card className="card">
@@ -41,7 +53,7 @@ const GoodDeed = () => {
           ) : (
             <p className="message">{kindness}</p>
           )}
-          <Button onClick={fetchKindness} className="button">Generate</Button>
+          <Button onClick={addStreak} className="button">Mark as Done</Button>
         </CardContent>
       </Card>
     </div>
