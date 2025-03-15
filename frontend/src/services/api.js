@@ -1,35 +1,75 @@
 import { auth } from '../firebase';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// Use the environment variable but default to port 5001 since that's what's in your .env
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
+
+console.log('API Service initialized with URL:', API_URL);
+
+/**
+ * Get the current user's ID token
+ */
+const getAuthToken = async () => {
+  const user = auth.currentUser;
+  if (!user) {
+    console.log('No authenticated user found when requesting token');
+    return null;
+  }
+  
+  try {
+    const token = await user.getIdToken(true); // Force refresh the token
+    console.log('Authentication token obtained successfully');
+    return token;
+  } catch (error) {
+    console.error('Error getting authentication token:', error);
+    return null;
+  }
+};
 
 /**
  * Wrapper for fetch that includes authentication token and error handling
  */
 const fetchWithAuth = async (endpoint, options = {}) => {
   try {
-    // Get the current user's ID token
-    const user = auth.currentUser;
+    const fullUrl = `${API_URL}${endpoint}`;
+    console.log(`API request to ${fullUrl}`);
+    
+    // Set up headers with content type
     let headers = { 'Content-Type': 'application/json' };
     
-    if (user) {
-      const token = await user.getIdToken();
+    // Get authentication token if user is signed in
+    const token = await getAuthToken();
+    if (token) {
+      console.log('Adding auth token to request');
       headers['Authorization'] = `Bearer ${token}`;
     }
     
-    const response = await fetch(`${API_URL}${endpoint}`, {
+    // Merge with any provided headers
+    if (options.headers) {
+      headers = { ...headers, ...options.headers };
+    }
+    
+    // Make the request
+    const response = await fetch(fullUrl, {
       ...options,
-      headers: {
-        ...headers,
-        ...(options.headers || {}),
-      },
+      headers,
     });
 
+    console.log(`Response status: ${response.status}`);
+    
+    // Try to parse JSON, but handle cases where response might not be JSON
+    let data;
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      data = { message: await response.text() };
+    }
+    
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `Request failed with status ${response.status}`);
+      throw new Error(data.message || `Request failed with status ${response.status}`);
     }
 
-    return await response.json();
+    return data;
   } catch (error) {
     console.error('API request failed:', error);
     throw error;
@@ -37,22 +77,22 @@ const fetchWithAuth = async (endpoint, options = {}) => {
 };
 
 export const apiService = {
-  // Example GET request
+  // GET request
   get: (endpoint) => fetchWithAuth(endpoint),
   
-  // Example POST request
+  // POST request
   post: (endpoint, data) => fetchWithAuth(endpoint, {
     method: 'POST',
     body: JSON.stringify(data),
   }),
   
-  // Example PUT request
+  // PUT request
   put: (endpoint, data) => fetchWithAuth(endpoint, {
     method: 'PUT',
     body: JSON.stringify(data),
   }),
   
-  // Example DELETE request
+  // DELETE request
   delete: (endpoint) => fetchWithAuth(endpoint, {
     method: 'DELETE',
   }),
