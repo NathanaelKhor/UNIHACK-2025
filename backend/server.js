@@ -1,162 +1,91 @@
+// Import required packages
 const express = require('express');
 const cors = require('cors');
+const dotenv = require('dotenv');
 const admin = require('firebase-admin');
-require('dotenv').config();
 
-console.log('Starting server initialization...');
+// Load environment variables
+dotenv.config();
 
-// Initialize Firebase Admin SDK
-let serviceAccount;
-try {
-  serviceAccount = require('./serviceAccountKey.json');
-  console.log('Using service account from serviceAccountKey.json');
-} catch (error) {
-  console.error('Service account file error:', error.message);
-  console.log('Attempting to use environment variables...');
-  
-  // If no service account file, use environment variables
-  serviceAccount = {
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-  };
-  
-  // Validate service account from env variables
-  if (!serviceAccount.projectId || !serviceAccount.privateKey || !serviceAccount.clientEmail) {
-    console.error('Missing Firebase credentials in environment variables');
-    console.error('Ensure you have FIREBASE_PROJECT_ID, FIREBASE_PRIVATE_KEY, and FIREBASE_CLIENT_EMAIL in your .env file');
-    process.exit(1);
-  }
-  
-  // Log service account info (without private key details)
-  console.log('Service account info from env:', {
-    projectId: serviceAccount.projectId,
-    clientEmail: serviceAccount.clientEmail,
-    privateKeyProvided: !!serviceAccount.privateKey
-  });
-}
-
-// Initialize Firebase
-try {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: process.env.FIREBASE_DATABASE_URL || `https://${serviceAccount.projectId}.firebaseio.com`,
-  });
-  console.log('Firebase Admin SDK initialized successfully');
-  
-  // Initialize Firestore
-  const db = admin.firestore();
-  console.log('Firestore initialized');
-} catch (error) {
-  console.error('Error initializing Firebase:', error);
-  process.exit(1);
-}
-
+// Initialize Express app
 const app = express();
+const PORT = process.env.PORT || 5001;
 
-// Middleware
-// Enable CORS for all origins in development for testing
+// Configure CORS - allow requests from frontend
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:3000',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  credentials: true
 }));
+
+// Parse JSON request bodies
 app.use(express.json());
 
-// Authentication middleware
-const authenticateUser = async (req, res, next) => {
+// Initialize Firebase Admin SDK
+try {
+  // Check if using service account file or environment variables
+  const serviceAccount = require('./serviceAccountKey.json');
+  
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: process.env.FIREBASE_DATABASE_URL || 'https://butter-butter.firebaseio.com'
+  });
+  
+  console.log('Firebase Admin SDK initialized successfully using service account file');
+} catch (error) {
+  // Fallback to environment variables if service account file fails
+  console.log('Service account file not found or invalid, using environment variables');
+  
+  admin.initializeApp({
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      // Replace escaped newlines in the private key
+      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
+    }),
+    databaseURL: process.env.FIREBASE_DATABASE_URL || 'https://butter-butter.firebaseio.com'
+  });
+  
+  console.log('Firebase Admin SDK initialized successfully using environment variables');
+}
+
+// Middleware to verify Firebase auth token
+const verifyToken = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Unauthorized: No token provided' });
+  }
+
+  const token = authHeader.split('Bearer ')[1];
   try {
-    console.log('Authenticating request...');
-    const authHeader = req.headers.authorization;
-    
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      console.log('No token provided in Authorization header');
-      return res.status(401).json({ message: 'Authentication required. No token provided.' });
-    }
-    
-    const token = authHeader.split('Bearer ')[1];
-    console.log('Token received, verifying with Firebase...');
-    
-    try {
-      const decodedToken = await admin.auth().verifyIdToken(token);
-      console.log('Token verified successfully for user:', decodedToken.uid);
-      req.user = decodedToken;
-      next();
-    } catch (error) {
-      console.error('Token verification failed:', error.message);
-      return res.status(401).json({ message: 'Invalid or expired token.' });
-    }
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    req.user = decodedToken;
+    next();
   } catch (error) {
-    console.error('Authentication error:', error);
-    res.status(500).json({ message: 'Authentication process failed' });
+    console.error('Error verifying auth token:', error);
+    return res.status(401).json({ message: 'Unauthorized: Invalid token' });
   }
 };
 
-// Public routes
+// Health check endpoint (public)
 app.get('/api/health', (req, res) => {
-  console.log('Health check endpoint accessed');
-  res.status(200).json({ 
-    status: 'Server is up and running',
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
-  });
+  res.status(200).json({ status: 'ok', message: 'Server is running' });
 });
 
-// Test Firestore connection
-app.get('/api/firebase-test', async (req, res) => {
+// Protected route example
+app.get('/api/user/profile', verifyToken, async (req, res) => {
   try {
-    const timestamp = admin.firestore.Timestamp.now();
-    await admin.firestore().collection('server_health').add({
-      timestamp: timestamp,
-      status: 'ok'
-    });
-    console.log('Firebase connection test successful');
-    res.status(200).json({ 
-      status: 'Firebase connection successful',
-      timestamp: timestamp.toDate() 
-    });
-  } catch (error) {
-    console.error('Firebase connection test failed:', error);
-    res.status(500).json({ 
-      status: 'Firebase connection failed',
-      error: error.message 
-    });
-  }
-});
-
-// Auth test endpoint - confirms if authentication is working
-app.get('/api/auth-test', authenticateUser, (req, res) => {
-  console.log('Auth test successful for user:', req.user.uid);
-  res.status(200).json({ 
-    authenticated: true, 
-    uid: req.user.uid,
-    email: req.user.email,
-    isAnonymous: req.user.firebase?.sign_in_provider === 'anonymous'
-  });
-});
-
-// Protected routes (require authentication)
-app.get('/api/user/profile', authenticateUser, async (req, res) => {
-  try {
-    // The user ID from the verified token
-    const uid = req.user.uid;
-    console.log(`Fetching user profile for ${uid}`);
+    // Get user data from Firebase Auth
+    const userRecord = await admin.auth().getUser(req.user.uid);
     
-    // Here you would typically fetch user data from Firestore
-    try {
-      const userRecord = await admin.auth().getUser(uid);
-      
-      res.status(200).json({
-        uid: userRecord.uid,
-        email: userRecord.email,
-        displayName: userRecord.displayName,
-        isAnonymous: req.user.firebase?.sign_in_provider === 'anonymous',
-      });
-    } catch (error) {
-      console.error(`Error fetching user ${uid}:`, error);
-      res.status(404).json({ message: 'User not found' });
-    }
+    // Return user profile data
+    res.status(200).json({
+      uid: userRecord.uid,
+      email: userRecord.email || 'Anonymous user',
+      displayName: userRecord.displayName || 'Anonymous user',
+      photoURL: userRecord.photoURL,
+      emailVerified: userRecord.emailVerified,
+      isAnonymous: req.user.firebase && req.user.firebase.sign_in_provider === 'anonymous'
+    });
   } catch (error) {
     console.error('Error fetching user profile:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -164,8 +93,7 @@ app.get('/api/user/profile', authenticateUser, async (req, res) => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log(`CORS enabled for origin: ${process.env.CLIENT_URL || 'http://localhost:3000'}`);
+  console.log(`Health check available at: http://localhost:${PORT}/api/health`);
 });
