@@ -19,7 +19,7 @@ const GoodDeed = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("https://your-backend-api.com/kindness");
+      const response = await fetch("https://localhost:5001/api/kindness");
       if (!response.ok) {
         throw new Error("Failed to fetch kindness act");
       }
