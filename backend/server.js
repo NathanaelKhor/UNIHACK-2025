@@ -2,7 +2,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const admin = require('firebase-admin');
+
 const { google } = require('googleapis');
 
 // Load environment variables
@@ -20,34 +20,13 @@ app.use(cors({
 
 // Parse JSON request bodies
 app.use(express.json());
+const serviceAccount = require("./serviceAccountKey.json");
+const admin = require('firebase-admin');
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
+const db = admin.firestore()
 
-// Initialize Firebase Admin SDK
-try {
-  // Check if using service account file or environment variables
-  const serviceAccount = require('./serviceAccountKey.json');
-  
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: process.env.FIREBASE_DATABASE_URL || 'https://butter-butter.firebaseio.com'
-  });
-  
-  console.log('Firebase Admin SDK initialized successfully using service account file');
-} catch (error) {
-  // Fallback to environment variables if service account file fails
-  console.log('Service account file not found or invalid, using environment variables');
-  
-  admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      // Replace escaped newlines in the private key
-      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
-    }),
-    databaseURL: process.env.FIREBASE_DATABASE_URL || 'https://butter-butter.firebaseio.com'
-  });
-  
-  console.log('Firebase Admin SDK initialized successfully using environment variables');
-}
 
 // Initialize Google API client
 const googleApiKey = process.env.GOOGLE_API_KEY;
@@ -74,18 +53,17 @@ const verifyToken = async (req, res, next) => {
 
 // Create user endpoint
 app.post('/api/users', async (req, res) => {
-  const { username, password } = req.body;
+  const { username } = req.body;
+  console.log(req.body);
 
-  if (typeof username !== "string" || typeof password !== "string") {
-    return res.status(400).json({ error: "Username and password must be strings." });
+  if (typeof username !== "string") {
+    return res.status(400).json({ error: "Username must be string." });
   }
 
   try {
     const userRef = db.collection('users').doc();
     await userRef.set({
-      username,
-      password,
-      createdAt: new Date()
+      username
     });
     res.status(201).json({ message: 'User created successfully', userId: userRef.id });
   } catch (error) {
