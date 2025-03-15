@@ -9,6 +9,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/ui/navbar/Navbar";
 import Login from ".//components/login/login"
 import GoodDeed from "./components/gooddeed/gooddeed";
+import Register from "./components/register/register"
 
 function App() {
   const [user, setUser] = useState(null);
@@ -78,11 +79,12 @@ function App() {
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/login" element={<Login />}></Route>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/gooddeed" element={<GoodDeed />} />
       </Routes>
     </Router>
-      <header className="App-header">
+      {/* <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <h1>UNIHACK 2025 Project</h1>
         
@@ -124,7 +126,7 @@ function App() {
             <p><strong>Creation Time:</strong> {user.metadata?.creationTime}</p>
           </div>
         )}
-      </header>
+      </header> */}
 
     </div>
   );
