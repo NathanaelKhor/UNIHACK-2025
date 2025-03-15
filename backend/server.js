@@ -54,10 +54,16 @@ const verifyToken = async (req, res, next) => {
 // Create user endpoint
 app.post('/api/users', async (req, res) => {
   const { username } = req.body;
-  console.log(req.body);
+  console.log('Username: ' + req.body);
 
   if (typeof username !== "string") {
     return res.status(400).json({ error: "Username must be string." });
+  }
+
+  const usernames = await db.collection('users').where('username', '==', username).get();
+  if (!usernames.empty) {
+    console.log('Username already exists');
+    return res.status(400).json({ error: "Username already exists." });
   }
 
   try {
@@ -72,31 +78,6 @@ app.post('/api/users', async (req, res) => {
 });
 
 
-// Health check endpoint (public)
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok', message: 'Server is running' });
-});
-
-// Protected route example
-app.get('/api/user/profile', verifyToken, async (req, res) => {
-  try {
-    // Get user data from Firebase Auth
-    const userRecord = await admin.auth().getUser(req.user.uid);
-    
-    // Return user profile data
-    res.status(200).json({
-      uid: userRecord.uid,
-      email: userRecord.email || 'Anonymous user',
-      displayName: userRecord.displayName || 'Anonymous user',
-      photoURL: userRecord.photoURL,
-      emailVerified: userRecord.emailVerified,
-      isAnonymous: req.user.firebase && req.user.firebase.sign_in_provider === 'anonymous'
-    });
-  } catch (error) {
-    console.error('Error fetching user profile:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
 
 // Start the server
 app.listen(PORT, () => {
