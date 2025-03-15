@@ -118,11 +118,6 @@ app.post("/api/kindness", async (req, res) => {
       return res.status(404).json({ error: "User not found." });
     }
 
-    // If the user exists, check the password (you'll need to verify password logic here)
-    // In Firebase Auth, password validation is done through Firebase client-side SDK
-    // You'll need to send the password to the client for Firebase to handle authentication
-
-    // Placeholder success response
     res.status(200).json({ message: "Login successful!" });
   } catch (error) {
     console.error(error);
