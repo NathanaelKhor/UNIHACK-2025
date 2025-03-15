@@ -1,7 +1,7 @@
 // Import required packages
 const express = require("express");
 const cors = require("cors");
-const createGoodDeed = require('./models/good-deed');
+const createGoodDeed = require("./models/good-deed");
 const dotenv = require("dotenv");
 
 const { google } = require("googleapis");
@@ -65,6 +65,7 @@ app.post("/api/users", async (req, res) => {
     await userRef.set({
       username,
       password,
+      streak: 0, // Initialize streak
     });
     res
       .status(201)
@@ -94,16 +95,21 @@ app.post("/api/login", async (req, res) => {
     if (user.password !== password) {
       return res.status(400).json({ error: "Invalid username or password." });
     } else {
-      return res.status(200).json({ message: "Login successful!", UserId: userSnapshot.docs[0].id });
+      return res
+        .status(200)
+        .json({
+          message: "Login successful!",
+          UserId: userSnapshot.docs[0].id,
+          username: user.username,
+          password: user.password,
+          streak: user.streak,
+        });
     }
-
-    res.status(200).json({ message: "Login successful!" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "An error occurred while logging in." });
   }
 });
-
 
 app.get("/api/kindness", async (req, res) => {
   try {
@@ -116,7 +122,42 @@ app.get("/api/kindness", async (req, res) => {
   }
 });
 
+app.post("/api/completeGoodDeed", async (req, res) => {
+  const { username, password, streak } = req.body;
+  console.log("Completing good deed for user:", username);
 
+  try {
+    const querySnapshot = await db
+      .collection("users")
+      .where("username", "==", username)
+      .get();
+
+    if (querySnapshot.empty) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const userDoc = querySnapshot.docs[0];
+    const userData = userDoc.data();
+
+    if (userData.password !== password) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    const newStreak = (userData.streak || 0) + 1;
+
+    await userDoc.ref.update({
+      streak: newStreak,
+    });
+
+    return res.status(200).json({
+      message: "Good deed completed successfully!",
+      streak: newStreak,
+    });
+  } catch (error) {
+    console.error("Error updating streak:", error);
+    return res.status(500).json({ error: "Failed to update streak" });
+  }
+});
 
 // Start the server
 app.listen(PORT, () => {

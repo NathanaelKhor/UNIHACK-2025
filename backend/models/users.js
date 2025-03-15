@@ -1,11 +1,13 @@
-function createUser(username, ) {
-    if (typeof username !== "string") {
-      throw new Error("Username must be a string.");
-    }
-  
-    return {
-      username
-    };
+function createUser(username, password) {
+  if (typeof username !== "string" || typeof password !== "string") {
+    throw new Error("Username and password must be strings.");
   }
-  
-  module.exports = createUser;
+
+  return {
+    username,
+    password,
+    streak: 0, // Initialize streak to 0 for new users
+  };
+}
+
+module.exports = createUser;

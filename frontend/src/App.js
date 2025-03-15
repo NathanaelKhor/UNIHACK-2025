@@ -5,11 +5,31 @@ import { apiService } from "./services/api";
 import logo from "./logo.svg";
 import "./App.css";
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 import Navbar from "./components/ui/navbar/Navbar";
 import Login from ".//components/login/login";
 import GoodDeed from "./components/gooddeed/gooddeed";
 import Register from "./components/register/register";
+import { UserContext, UserProvider, useUser } from "./context/UserContext";
+
+const ProtectedRoute = ({ element }) => {
+  const { user } = useUser();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  return user ? element : null;
+};
 
 function App() {
   const [user, setUser] = useState(null);
@@ -89,52 +109,13 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/gooddeed" element={<GoodDeed />} />
+          <Route
+            path="/gooddeed"
+            element={<ProtectedRoute element={<GoodDeed />} />}
+          />
+          <Route path="/" element={<Navigate to="/gooddeed" />} />
         </Routes>
       </Router>
-      {/* <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <h1>UNIHACK 2025 Project</h1>
-        
-        <div className="status-container">
-          <p>
-            <strong>Firebase:</strong> {user ? 'Authenticated' : 'Not authenticated'}
-            {authError && <div className="error">Error: {authError}</div>}
-          </p>
-          
-          <p>
-            <strong>Backend:</strong> {serverStatus}
-            {backendError && <div className="error">Error: {backendError}</div>}
-          </p>
-        </div>
-        
-        {!user && (
-          <button 
-            onClick={handleSignInAnonymously}
-            disabled={loading && authAttempted}
-            style={{
-              padding: '10px 20px',
-              margin: '20px',
-              backgroundColor: loading && authAttempted ? '#cccccc' : '#61dafb',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: loading && authAttempted ? 'not-allowed' : 'pointer',
-              fontSize: '16px'
-            }}
-          >
-            {loading && authAttempted ? 'Signing in...' : 'Sign In Anonymously for Testing'}
-          </button>
-        )}
-        
-        {user && (
-          <div className="user-info">
-            <h3>User Information</h3>
-            <p><strong>User ID:</strong> {user.uid}</p>
-            <p><strong>Is Anonymous:</strong> {user.isAnonymous ? 'Yes' : 'No'}</p>
-            <p><strong>Creation Time:</strong> {user.metadata?.creationTime}</p>
-          </div>
-        )}
-      </header> */}
     </div>
   );
 }
