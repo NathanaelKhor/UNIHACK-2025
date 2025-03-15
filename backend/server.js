@@ -64,6 +64,7 @@ app.post("/api/users", async (req, res) => {
     await userRef.set({
       username,
       password,
+      streak: 0,
     });
     res
       .status(201)
@@ -93,15 +94,12 @@ app.post("/api/login", async (req, res) => {
     if (user.password !== password) {
       return res.status(400).json({ error: "Invalid username or password." });
     } else {
+      console.log(user);
       return res
         .status(200)
-        .json({
-          message: "Login successful!",
-          UserId: userSnapshot.docs[0].id,
-        });
+        .json(user);
     }
 
-    res.status(200).json({ message: "Login successful!" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "An error occurred while logging in." });
