@@ -14,6 +14,29 @@ const Login = () => {
       return;
     }
 
+    // Create user by calling the backend API
+    fetch('http://localhost:5001/api/users', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert('Error creating user: ' + data.error);
+        } else {
+            alert('User created successfully!');
+            // Redirect to a new page or perform other actions
+            // window.location.href = 'dashboard.html'; // Uncomment to redirect to another page
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while creating the user.');
+    });
+
     // Basic authentication logic (for demo purposes)
     if (username === "admin" && password === "password") {
       alert("Login successful!");
