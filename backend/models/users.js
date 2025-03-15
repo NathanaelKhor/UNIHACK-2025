@@ -1,11 +1,10 @@
-function createUser(username, password) {
-    if (typeof username !== "string" || typeof password !== "string") {
-      throw new Error("Username and password must be strings.");
+function createUser(username, ) {
+    if (typeof username !== "string") {
+      throw new Error("Username must be a string.");
     }
   
     return {
-      username,
-      password,
+      username
     };
   }
   

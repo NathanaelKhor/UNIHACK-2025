@@ -3,6 +3,7 @@ import "./register.css"; // Ensure the file exists in the same directory
 
 const Register = () => {
   const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("")
 
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent form from reloading the page
@@ -19,7 +20,7 @@ const Register = () => {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username })
+        body: JSON.stringify({ username, password })
     })
     .then(response => response.json())
     .then(data => {
@@ -48,6 +49,12 @@ const Register = () => {
           id="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+        />
+        <input 
+          type="text"
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
 
         <button type="submit">Register</button>

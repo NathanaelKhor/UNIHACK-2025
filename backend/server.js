@@ -54,10 +54,16 @@ const verifyToken = async (req, res, next) => {
 // Create user endpoint
 app.post('/api/users', async (req, res) => {
   const { username } = req.body;
-  console.log(req.body);
+  console.log('Username: ' + req.body);
 
   if (typeof username !== "string") {
     return res.status(400).json({ error: "Username must be string." });
+  }
+
+  const usernames = await db.collection('users').where('username', '==', username).get();
+  if (!usernames.empty) {
+    console.log('Username already exists');
+    return res.status(400).json({ error: "Username already exists." });
   }
 
   try {
@@ -71,32 +77,28 @@ app.post('/api/users', async (req, res) => {
   }
 });
 
+app.post("/api/login", async (req, res) => {
+  const { username, password } = req.body;
 
-// Health check endpoint (public)
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok', message: 'Server is running' });
-});
-
-// Protected route example
-app.get('/api/user/profile', verifyToken, async (req, res) => {
   try {
-    // Get user data from Firebase Auth
-    const userRecord = await admin.auth().getUser(req.user.uid);
-    
-    // Return user profile data
-    res.status(200).json({
-      uid: userRecord.uid,
-      email: userRecord.email || 'Anonymous user',
-      displayName: userRecord.displayName || 'Anonymous user',
-      photoURL: userRecord.photoURL,
-      emailVerified: userRecord.emailVerified,
-      isAnonymous: req.user.firebase && req.user.firebase.sign_in_provider === 'anonymous'
-    });
+    // Check if user exists in Firebase Authentication
+    const userRecord = await admin.auth().getUserByEmail(username); // You can use email as username in Firebase
+    if (!userRecord) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    // If the user exists, check the password (you'll need to verify password logic here)
+    // In Firebase Auth, password validation is done through Firebase client-side SDK
+    // You'll need to send the password to the client for Firebase to handle authentication
+
+    // Placeholder success response
+    res.status(200).json({ message: "Login successful!" });
   } catch (error) {
-    console.error('Error fetching user profile:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error(error);
+    res.status(500).json({ error: "An error occurred while logging in." });
   }
 });
+
 
 // Start the server
 app.listen(PORT, () => {
