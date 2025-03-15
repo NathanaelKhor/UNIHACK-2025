@@ -2,7 +2,7 @@ require('dotenv').config();
 
 async function createGoodDeed() {
   const { GoogleGenerativeAI } = require("@google/generative-ai");
-  const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+  const genAI = new GoogleGenerativeAI("AIzaSyCck5Wz3v3rxKVYqF49yC9SeYMOatTxanQ");
   const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
   const prompt = "give me 1 random act of kindness to do, one short sentence, no repeats, completely different to your different answer";
