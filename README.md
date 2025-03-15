@@ -28,18 +28,19 @@ cd backend
 npm install
 ```
 
-3. Firebase Configuration:
-   - The backend is already configured to use Firebase using two methods:
-     - Primary: Using the `serviceAccountKey.json` file already in the project
-     - Fallback: Using environment variables from `.env` file
-   - No additional setup is needed as both configurations are already included
+3. Create environment variables file:
+```bash
+cp .env.example .env
+```
 
-4. Start the backend server:
+4. Update the `.env` file with the correct Firebase credentials (check with project admin if needed)
+
+5. Start the backend server:
 ```bash
 npm run dev
 ```
 
-The server will start on port 5001 by default (http://localhost:5001).
+The server will start on port 5000 by default (http://localhost:5000).
 
 ## Frontend Setup
 
@@ -53,10 +54,10 @@ cd frontend
 npm install
 ```
 
-3. Firebase Configuration:
-   - The frontend is already configured to use Firebase with the `firebase.js` file
-   - Environment variables are already set in the `.env` file
-   - No additional configuration needed unless you want to use your own Firebase project
+3. Create environment variables file:
+```bash
+cp .env.example .env
+```
 
 4. Start the React development server:
 ```bash
@@ -65,33 +66,16 @@ npm start
 
 The React app will start on port 3000 by default (http://localhost:3000).
 
-## Verifying the Setup
+## Firebase Configuration
 
-1. Check that the backend server is running:
-   - Open http://localhost:5001/api/health in your browser
-   - You should see: `{"status":"ok","message":"Server is running"}`
+The project uses Firebase for authentication and database operations. Both frontend and backend are already configured to use Firebase, but if you need to make changes:
 
-2. Check that the frontend is connected to Firebase:
-   - Open http://localhost:3000 in your browser
-   - You should see the status of Firebase and Backend connections
-   - You can click "Sign In Anonymously for Testing" to test Firebase authentication
-
-## Firebase Integration Details
-
-The project uses Firebase for authentication and database operations:
-
-- **Frontend Integration**: 
-  - Firebase Web SDK is initialized in `frontend/src/firebase.js`
-  - Authentication state is managed in `App.js`
-  
-- **Backend Integration**:
-  - Firebase Admin SDK is initialized in `backend/server.js`
-  - Uses service account credentials for secure server-side operations
-  - Protected routes use Firebase token verification middleware
+- Frontend: Firebase config is in `frontend/src/firebase.js`
+- Backend: Firebase Admin SDK is initialized in `backend/server.js`
 
 ## API Communication
 
-The frontend is configured to communicate with the backend API at `http://localhost:5001/api`. This configuration is in `.env` files of both projects.
+The frontend is configured to communicate with the backend API at `http://localhost:5000/api`. This configuration is in `.env` files of both projects.
 
 ## Available Endpoints
 
@@ -106,14 +90,13 @@ If you encounter issues with Firebase authentication or API communication:
 2. Check that environment variables are properly set
 3. Verify the Firebase credentials
 4. Clear browser cache and try again
-5. Check the browser console and server logs for specific error messages
 
 ## Project Structure
 
 - `/frontend`: React application
 - `/backend`: Express server
 - `/frontend/src/services`: API service for communicating with the backend
-- `/backend/server.js`: Main server file with API routes and Firebase configuration
+- `/backend/server.js`: Main server file with API routes
 
 ## Development Workflow
 

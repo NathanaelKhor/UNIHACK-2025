@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const admin = require('firebase-admin');
+const { google } = require('googleapis');
 
 // Load environment variables
 dotenv.config();
@@ -47,6 +48,11 @@ try {
   
   console.log('Firebase Admin SDK initialized successfully using environment variables');
 }
+
+// Initialize Google API client
+const googleApiKey = process.env.GOOGLE_API_KEY;
+const googleClient = google.auth.fromAPIKey(googleApiKey);
+console.log('Google API client initialized successfully');
 
 // Middleware to verify Firebase auth token
 const verifyToken = async (req, res, next) => {
