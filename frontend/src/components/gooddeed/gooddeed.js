@@ -19,7 +19,7 @@ const GoodDeed = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("https://localhost:5001/api/kindness");
+      const response = await fetch("http://localhost:5001/api/kindness");
       if (!response.ok) {
         throw new Error("Failed to fetch kindness act");
       }
@@ -52,8 +52,11 @@ const addStreak = () => {
             <p className="error-message">{error}</p>
           ) : (
             <p className="message">{kindness}</p>
+            
           )}
-          <Button onClick={addStreak} className="button">Mark as Done</Button>
+          <Button onClick={fetchKindness} className="button">
+            Generate Act of Kindness
+          </Button>
         </CardContent>
       </Card>
     </div>
