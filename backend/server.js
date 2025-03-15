@@ -74,17 +74,17 @@ const verifyToken = async (req, res, next) => {
 
 // Create user endpoint
 app.post('/api/users', async (req, res) => {
-  const { username, password } = req.body;
+  const { username } = req.body;
+  console.log(req.body);
 
-  if (typeof username !== "string" || typeof password !== "string") {
-    return res.status(400).json({ error: "Username and password must be strings." });
+  if (typeof username !== "string") {
+    return res.status(400).json({ error: "Username must be string." });
   }
 
   try {
     const userRef = db.collection('users').doc();
     await userRef.set({
       username,
-      password,
       createdAt: new Date()
     });
     res.status(201).json({ message: 'User created successfully', userId: userRef.id });
@@ -93,26 +93,6 @@ app.post('/api/users', async (req, res) => {
   }
 });
 
-// Create user endpoint
-app.post('/api/users', async (req, res) => {
-  const { username, password } = req.body;
-
-  if (typeof username !== "string" || typeof password !== "string") {
-    return res.status(400).json({ error: "Username and password must be strings." });
-  }
-
-  try {
-    const userRef = db.collection('users').doc();
-    await userRef.set({
-      username,
-      password,
-      createdAt: new Date()
-    });
-    res.status(201).json({ message: 'User created successfully', userId: userRef.id });
-  } catch (error) {
-    res.status(500).json({ error: 'Error creating user', details: error.message });
-  }
-});
 
 // Health check endpoint (public)
 app.get('/api/health', (req, res) => {
