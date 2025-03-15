@@ -1,35 +1,91 @@
+/* Reset default margin, padding, and box-sizing */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* Navbar container */
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #007bff;
-    padding: 10px 20px;
-    color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+  padding: 15px 25px;
+  position: fixed; /* Keeps navbar on screen */
+  top: 20px; /* Position from top */
+  left: 50%;
+  transform: translateX(-50%); /* Center navbar */
+  width: 95%; /* Adjust width as needed */
+  border-radius: 20px; /* Rounded corners */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Floating effect */
+  z-index: 1000; /* Ensure it's above other elements */
+}
+
+/* Logo styling */
+.logo img {
+  height: 50px;
+  width: auto;
+}
+
+/* Navigation Links */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+/* Each link */
+.nav-links li {
+  display: inline;
+}
+
+/* Link styling */
+.nav-links a {
+  text-decoration: none;
+  color: rgb(0, 0, 0);
+  font-size: 16px;
+  padding: 10px;
+  transition: 0.3s;
+}
+
+/* Hover effect */
+.nav-links a:hover {
+  background: #555;
+  color: white;
+  border-radius: 5px;
+}
+
+/* Hamburger menu (hidden by default) */
+.hamburger {
+  display: none;
+  font-size: 24px;
+  color: black;
+  cursor: pointer;
+}
+
+/* Mobile Responsive Styles */
+@media screen and (max-width: 768px) {
+  .nav-links {
+      display: none;
+      flex-direction: column;
+      background: rgba(0, 0, 0, 0.8); /* Darker for contrast */
+      position: absolute;
+      top: 70px;
+      right: 10px;
+      width: 200px;
+      text-align: center;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
   }
-  
-  .navbar-logo {
-    font-size: 1.5rem;
-    font-weight: bold;
+
+  .nav-links.active {
+      display: flex;
   }
-  
-  .navbar-links {
-    list-style: none;
-    display: flex;
-    gap: 20px;
+
+  .hamburger {
+      display: block;
   }
-  
-  .navbar-links li {
-    display: inline;
-  }
-  
-  .navbar-links a {
-    color: white;
-    text-decoration: none;
-    font-size: 1rem;
-    transition: color 0.3s;
-  }
-  
-  .navbar-links a:hover {
-    color: #d4d4d4;
-  }
-  
+}

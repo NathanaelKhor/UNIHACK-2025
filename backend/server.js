@@ -103,6 +103,53 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
+app.post("/api/kindness", async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    // Check if user exists in Firebase Authentication
+    const userRecord = await admin.auth().getUserByEmail(username); // You can use email as username in Firebase
+    if (!userRecord) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    // If the user exists, check the password (you'll need to verify password logic here)
+    // In Firebase Auth, password validation is done through Firebase client-side SDK
+    // You'll need to send the password to the client for Firebase to handle authentication
+
+    // Placeholder success response
+    res.status(200).json({ message: "Login successful!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred while logging in." });
+  }
+});
+
+
+app.post("/api/kindness", async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    // Check if user exists in Firebase Authentication
+    const userRecord = await admin.auth().getUserByEmail(username); // You can use email as username in Firebase
+    if (!userRecord) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    // If the user exists, check the password (you'll need to verify password logic here)
+    // In Firebase Auth, password validation is done through Firebase client-side SDK
+    // You'll need to send the password to the client for Firebase to handle authentication
+
+    // Placeholder success response
+    res.status(200).json({ message: "Login successful!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred while logging in." });
+  }
+});
+
+
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
