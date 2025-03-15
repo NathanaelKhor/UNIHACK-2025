@@ -93,24 +93,25 @@ app.post('/api/users', async (req, res) => {
   }
 });
 
-// Create user endpoint
-app.post('/api/users', async (req, res) => {
+app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
 
-  if (typeof username !== "string" || typeof password !== "string") {
-    return res.status(400).json({ error: "Username and password must be strings." });
-  }
-
   try {
-    const userRef = db.collection('users').doc();
-    await userRef.set({
-      username,
-      password,
-      createdAt: new Date()
-    });
-    res.status(201).json({ message: 'User created successfully', userId: userRef.id });
+    // Check if user exists in Firebase Authentication
+    const userRecord = await admin.auth().getUserByEmail(username); // You can use email as username in Firebase
+    if (!userRecord) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    // If the user exists, check the password (you'll need to verify password logic here)
+    // In Firebase Auth, password validation is done through Firebase client-side SDK
+    // You'll need to send the password to the client for Firebase to handle authentication
+
+    // Placeholder success response
+    res.status(200).json({ message: "Login successful!" });
   } catch (error) {
-    res.status(500).json({ error: 'Error creating user', details: error.message });
+    console.error(error);
+    res.status(500).json({ error: "An error occurred while logging in." });
   }
 });
 
