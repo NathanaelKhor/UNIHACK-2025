@@ -5,15 +5,17 @@ import "./gooddeed.css";
 import { useUser } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import streak from "../assets/streak.png";
+
 const GoodDeed = () => {
   const [kindness, setKindness] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const [promptGenerated, setpromptGenerated] = useState(false);
+  const [deedCompleted, setDeedCompleted] = useState(false); // To track if the deed is completed
   const { user, setUser } = useUser();
   const navigate = useNavigate();
 
-  // This code tries to get the kindness from backend api
+  // This code tries to get the kindness from backend API
   const fetchKindness = async () => {
     setLoading(true);
     setError(null);
@@ -24,6 +26,7 @@ const GoodDeed = () => {
       }
       const data = await response.json();
       setKindness(data.act);
+      setpromptGenerated(true);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -36,7 +39,7 @@ const GoodDeed = () => {
       navigate("/login");
       return;
     }
-    fetchKindness();
+    // fetchKindness();
   }, [user, navigate]);
 
   const completeGoodDeed = async () => {
@@ -72,20 +75,22 @@ const GoodDeed = () => {
       const data = await response.json();
       console.log("Good deed completed, new streak:", data.streak);
       setUser({ ...user, streak: data.streak });
+      setDeedCompleted(true); // Mark deed as completed
     } catch (error) {
       console.error("Error completing good deed:", error);
     }
   };
 
   return (
+    
     <div className="container">
       <Card className="card">
         <CardContent className="card-content">
           <h2 className="title">Random Act of Kindness</h2>
           <div className="streak">
-                <a href="/">
-                    <img src={streak} alt="Streak" />
-                </a>
+            <a href="/">
+              <img src={streak} alt="Streak" />
+            </a>
           </div>
           <p>Current Streak: {user?.streak || 0}</p>
           {loading ? (
@@ -95,12 +100,24 @@ const GoodDeed = () => {
           ) : (
             <p className="message">{kindness}</p>
           )}
-          <Button onClick={fetchKindness} className="button">
-            Generate Act of Kindness
-          </Button>
-          <Button onClick={completeGoodDeed} className="button">
-            Task Complete
-          </Button>
+          {promptGenerated ? 
+          (!deedCompleted ? 
+          (
+            <Button
+              onClick={completeGoodDeed}
+              className={`button ${deedCompleted ? "opacity-50 cursor-not-allowed" : ""}`}
+              disabled={deedCompleted} // This disables the button after completion
+            > 
+              Mark as completed
+            </Button>
+          ) : (
+            <p>Task Completed</p>
+          ))
+          : (
+            <Button onClick={fetchKindness} className="button">
+              Generate Act of Kindness
+            </Button>
+          )}
         </CardContent>
       </Card>
     </div>
