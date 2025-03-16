@@ -59,41 +59,48 @@ const Friends = () => {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <h2 className="text header">Add Friend</h2>
-        <form onSubmit={handleSubmit}>
-          <label className="text">Username:</label>
-          <input
-            className="friend-input"
-            type="text"
-            id="friendUsername"
-            value={friendUsername}
-            onChange={(e) => setFriendUsername(e.target.value)}
-            placeholder="Enter friend's username"
-          />
-          <button className="add-friend-button"  type="submit">Add Friend</button>
-        </form>
+    <div className="friends-container">
+      <div className="friends-box">
+        <div className="friends-content">
+          <div className="friends-list">
+            <h3 className="header">Your Friends</h3>
+            {friendList.length > 0 ? (
+              <ul>
+                {friendList.map((friend, index) => (
+                  <li key={index}>
+                    <div className="friend-info">
+                      <span>{friend.username}</span>
+                    </div>
+                    <div className="streak-badge">
+                      <span className="streak-icon">🔥</span>
+                      <span className="streak-count text">
+                        {friend.streak} days
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text">No friends added yet</p>
+            )}
+          </div>
 
-        <div className="friends-list">
-          <h3 className="text header">Your Friends</h3>
-          {friendList.length > 0 ? (
-            <ul>
-              {friendList.map((friend, index) => (
-                <li key={index}>
-                  <div className="friend-info">
-                    <span>{friend.username}</span>
-                  </div>
-                  <div className="streak-badge">
-                    <span className="streak-icon">🔥</span>
-                    <span className="streak-count text">{friend.streak} days</span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text">No friends added yet</p>
-          )}
+          <div className="add-friend-section">
+            <h2 className="header add-friend-title">Add Friend</h2>
+            <form onSubmit={handleSubmit}>
+              <input
+                className="friend-input"
+                type="text"
+                id="friendUsername"
+                value={friendUsername}
+                onChange={(e) => setFriendUsername(e.target.value)}
+                placeholder="Enter friend's username"
+              />
+              <button className="add-friend-button" type="submit">
+                Add Friend
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
