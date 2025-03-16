@@ -34,7 +34,7 @@ const Navbar = () => {
                 {
                   user ? (
                     <>
-                      <li><Link to="/calendar">Check your Streak</Link></li>
+                      <li><Link to="/streak">Check your Streak</Link></li>
                       <li><Link to="/gooddeed">Spread the Goodness</Link></li>
                       <li><Link to="/friends">Friends</Link></li>
                       <li><Logout /></li>

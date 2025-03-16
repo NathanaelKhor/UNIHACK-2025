@@ -1,0 +1,50 @@
+/* gooddeed.css */
+
+:root {
+    --primary-color: #ffb347; /* Light orange */
+    --secondary-color: #ffcc80; /* Softer orange */
+    --text-color: #4a4a4a;
+    --background-color: #fffaf0;
+    --button-hover: #ff9800;
+    --card-shadow: rgba(0, 0, 0, 0.1);
+  }
+  
+  body, .container, .card, .card-content, .title, .message, .error-message {
+    font-family: "Georgia", serif !important;
+  }
+  
+  /* streak styling */
+  .streak img {
+    height: 120px;
+    width: auto;
+  }
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: var(--background-color);
+    padding: 20px;
+  }
+  
+  .card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px var(--card-shadow);
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+  }
+  
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+  }
