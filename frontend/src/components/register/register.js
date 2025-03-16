@@ -40,12 +40,13 @@ const Register = () => {
         alert('An error occurred while creating the user.');
     });
   }
-
+  
   return (
-    <div className="login-container">
-      <div className="login-box">
-      <h2>Register</h2>
+    <div className="register-container">
+      <div className="register-box">
+      
       <form onSubmit={handleSubmit}>
+      <h2>Register</h2>
         <label>Username:</label>
         <input
           type="text"
@@ -53,6 +54,7 @@ const Register = () => {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
+        <label>Password:</label>
         <input 
           type="text"
           id="password"
@@ -61,8 +63,8 @@ const Register = () => {
         />
 
         <button type="submit">Register</button>
+        <a href="login">Log-in Instead</a>
       </form>
-      <a href="login">Log-in Instead</a>
       </div>
     </div>
   );

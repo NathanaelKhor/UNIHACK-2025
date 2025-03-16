@@ -146,10 +146,10 @@ app.get("/api/kindness", async (req, res) => {
     nextDay.setHours(0, 0, 0, 0);
     nextDay.setDate(promptDate.getDate() + 1);
     console.log(nextDay);
-  
+    const promptGenerated = false;
 
-    if (currentDate.getTime() !== nextDay.getTime()) {
-      res.json({ act: result });
+    if (currentDate.getTime() !== nextDay.getTime() && promptGenerated == false) {
+      res.json({ act: result, promptGenerated: true });
     } else {
       console.log("error: cannot generate more than one act of kindness a day");
     };
