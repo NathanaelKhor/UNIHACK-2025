@@ -103,23 +103,44 @@ function App() {
     return <div className="App">Loading...</div>;
   }
 
-  return (
-    <div className="App">
-      <Router>
-        <Navbar />
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route
-            path="/gooddeed"
-            element={<ProtectedRoute element={<GoodDeed />} />}
-          />
-          <Route path="/" element={<Navigate to="/gooddeed" />} />
-          <Route path="/streak" element={<Streak />}></Route>
-        </Routes>
-      </Router>
-    </div>
+  if (user) {
+    return (
+      <div className="App">
+        <Router>
+          <Navbar />
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route
+              path="/gooddeed"
+              element={<ProtectedRoute element={<GoodDeed />} />}
+            />
+            <Route path="/" element={<Navigate to="/gooddeed" />} />
+            <Route path="/streak" element={<Streak />}></Route>
+          </Routes>
+        </Router>
+      </div>
+    );
+  }
+
+ else{
+    return (
+      <div className="App">
+        <Router>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route
+              path="/gooddeed"
+              element={<ProtectedRoute element={<GoodDeed />} />}
+            />
+            <Route path="/" element={<Navigate to="/gooddeed" />} />
+            <Route path="/streak" element={<Streak />}></Route>
+          </Routes>
+        </Router>
+      </div>
   );
+}
 }
 
 export default App;

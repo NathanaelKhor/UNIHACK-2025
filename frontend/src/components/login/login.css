@@ -1,57 +1,62 @@
 
 /* Container that holds the form */
 .login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center; /* Center vertically */
-    text-align: center;
-    width: 100vw;
-    height: 100vh; /* Full screen height */
-    background-image: url('background.png'); /* Background image */
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    position: relative; /* Ensures it covers the full page */
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Center vertically */
+  text-align: center;
+  width: 100vw;
+  height: 100vh; /* Full screen height */
+  background-image: url('background.png'); /* Background image */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative; /* Ensures it covers the full page */
 }
 
 /* Centering the login box */
 .login-box {
-    background: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    width: 300px; /* Adjust width */
-    position: absolute; /* Allows for precise centering */
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); /* Moves it to the center */
+  background-image: url('login.png');
+  background-size: 100% auto;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: transparent;
+  text-align: center;
+  height: 90%; /* Adjust height */
+  position: absolute; /* Allows for precise centering */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Moves it to the center */
 }
 
 /* Form styling */
 form {
-    display: flex;
-    flex-direction: column;
-    border: 1px solid #ccc;
-    padding: 20px;
-    border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.8);
-    text-align: center;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
+  border: 1px transparent;
+  background: none;
+  text-align: center;
+  justify-content: center;
+  position: relative; /* Allows for precise centering */
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Moves it to the center */
 }
 
 /* Styling form elements */
 label, input, button {
-    display: block;
-    margin: 10px 0;
-    text-align: center;
+  display: block;
+  margin: 5px 0;
+  text-align: center;
 }
 
 /* Styling the <h2> */
 h2 {
-    text-align: center;
-    color: #333;
-    font-size: 24px;
-    margin-bottom: 20px;
-    font-weight: bold;
+  text-align: center;
+  color: #333;
+  font-size: 24px;
+  margin-bottom: 5px;
+  font-weight: bold;
 }
