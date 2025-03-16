@@ -17,6 +17,7 @@ import Login from ".//components/login/login";
 import GoodDeed from "./components/gooddeed/gooddeed";
 import Register from "./components/register/register";
 import { UserContext, UserProvider, useUser } from "./context/UserContext";
+import Friends from "./components/friends/friends";
 
 const ProtectedRoute = ({ element }) => {
   const { user } = useUser();
@@ -114,6 +115,7 @@ function App() {
             element={<ProtectedRoute element={<GoodDeed />} />}
           />
           <Route path="/" element={<Navigate to="/gooddeed" />} />
+          <Route path="/friends" element={<Friends />} />
         </Routes>
       </Router>
     </div>

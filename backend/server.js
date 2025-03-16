@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const createGoodDeed = require("./models/good-deed");
 const dotenv = require("dotenv");
+const ceateFriend = require*("./models/friend");
 
 const { google } = require("googleapis");
 
@@ -66,6 +67,7 @@ app.post("/api/users", async (req, res) => {
       username,
       password,
       streak: 0, // Initialize streak
+      friends: [], // Initialize friends
     });
     res
       .status(201)
@@ -156,6 +158,74 @@ app.post("/api/completeGoodDeed", async (req, res) => {
   } catch (error) {
     console.error("Error updating streak:", error);
     return res.status(500).json({ error: "Failed to update streak" });
+  }
+});
+
+app.post("/api/addFriend", async (req, res) => {
+  const { username, friendUsername } = req.body;
+  console.log("Adding friend for user:", username, "Friend:", friendUsername);
+
+  try {
+    const querySnapshot = await db
+      .collection("users")
+      .where("username", "==", username)
+      .get();
+
+    if (querySnapshot.empty) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const userDoc = querySnapshot.docs[0];
+    const userData = userDoc.data();
+
+    if (!userData.friends) {
+      userData.friends = [];
+    }
+
+    if (userData.friends.includes(friend)) {
+      return res.status(400).json({ error: "Friend already added" });
+    }
+
+    userData.friends.push(friend);
+
+    await userDoc.ref.update({
+      friends: userData.friends,
+    });
+
+    const friendSnapshot = await db
+      .collection("users")
+      .where("username", "==", friendUsername)
+      .get();
+
+    if (querySnapshot.empty) {
+      return res.status(404).json({ error: "Friend not found" });
+    }
+
+    const friendDoc = friendSnapshot.docs[0];
+    const friendData = friendDoc.data();
+
+    if (!friendData.friends) {
+      friendData.friends = [];
+    }
+
+    if (friendData.friends.includes(user)) {
+      return res.status(400).json({ error: "Friend already added" });
+    }
+
+    friendData.friends.push(user);
+
+    await friendData.ref.update({
+      friends: userData.friends,
+    });
+
+    return res.status(200).json({
+      message: "Friend added successfully!",
+      userFriends: userData.friends,
+      friendFriends: friendData.friends,
+    });
+  } catch (error) {
+    console.error("Error adding friend:", error);
+    return res.status(500).json({ error: "Failed to add friend" });
   }
 });
 
