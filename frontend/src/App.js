@@ -117,8 +117,8 @@ function App() {
             element={<ProtectedRoute element={<GoodDeed />} />}
           />
           <Route path="/" element={<Navigate to="/gooddeed" />} />
-          <Route path="/streak" element={<Streak />}></Route>
-          <Route path="/friends" element={<Friends />} />
+          <Route path="/streak" element={<ProtectedRoute element={<Streak />} />}></Route>
+          <Route path="/friends" element={<ProtectedRoute element={<Friends />} />} />
         </Routes>
       </Router>
     </div>
