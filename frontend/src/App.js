@@ -33,7 +33,7 @@ const ProtectedRoute = ({ element }) => {
 };
 
 function App() {
-  const [user, setUser] = useState(null);
+  const {user, setUser} = useUser()
   const [loading, setLoading] = useState(true);
   const [serverStatus, setServerStatus] = useState("Checking...");
   const [authError, setAuthError] = useState(null);
