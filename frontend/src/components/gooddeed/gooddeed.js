@@ -4,7 +4,7 @@ import { Card, CardContent } from "../ui/card/card";
 import "./gooddeed.css";
 import { useUser } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
-
+import streak from "../assets/streak.png";
 const GoodDeed = () => {
   const [kindness, setKindness] = useState("");
   const [loading, setLoading] = useState(false);
@@ -82,6 +82,11 @@ const GoodDeed = () => {
       <Card className="card">
         <CardContent className="card-content">
           <h2 className="title">Random Act of Kindness</h2>
+          <div className="streak">
+                <a href="/">
+                    <img src={streak} alt="Streak" />
+                </a>
+          </div>
           <p>Current Streak: {user?.streak || 0}</p>
           {loading ? (
             <p className="message">Loading...</p>
