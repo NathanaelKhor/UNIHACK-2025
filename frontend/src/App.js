@@ -105,6 +105,7 @@ function App() {
 
   return (
     <div className="App">
+      <title>Butter Butter</title>
       <Router>
         <Navbar />
         <Routes>
