@@ -1,18 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./friends.css"; // Ensure the file exists in the same directory
+import "./friends.css";
 import { useUser } from "../../context/UserContext";
 
 const Friends = () => {
   const [friendUsername, setFriendUsername] = useState("");
+  const [friendList, setFriendList] = useState([]);
   const { user, setUser } = useUser();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      // Sort friends by streak in descending order
+      const sortedFriends = [
+        ...(Array.isArray(user.friends) ? user.friends : []),
+      ].sort((a, b) => (b.streak || 0) - (a.streak || 0));
+      setFriendList(sortedFriends);
+    }
+  }, [user]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!friendUsername) {
-      alert("Please fill in username.");
+    if (!friendUsername.trim()) {
+      alert("Please enter a username.");
       return;
     }
 
@@ -22,26 +33,28 @@ const Friends = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username: user.username, friendUsername }),
+        body: JSON.stringify({
+          username: user.username,
+          friendUsername: friendUsername.trim(),
+        }),
       });
 
       const data = await response.json();
-      const userFriends = data.userFriends.map((friend) => friend.username);
-      if (response.ok) {
-        const userData = {
-          username: data.username,
-          password: data.password,
-          streak: data.streak || 0,
-          friends: userFriends
-        };
-        setUser(userData);
-        navigate("/friends");
-      } else {
-        alert(data.error || "Add friend failed.");
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to add friend");
       }
+
+      setUser({
+        ...user,
+        friends: data.userFriends || [],
+      });
+
+      setFriendUsername("");
+      alert("Friend added successfully!");
     } catch (error) {
       console.error("Error:", error);
-      alert("An error occurred while adding friend.");
+      alert(error.message);
     }
   };
 
@@ -56,9 +69,31 @@ const Friends = () => {
             id="friendUsername"
             value={friendUsername}
             onChange={(e) => setFriendUsername(e.target.value)}
+            placeholder="Enter friend's username"
           />
           <button type="submit">Add Friend</button>
         </form>
+
+        <div className="friends-list">
+          <h3>Your Friends</h3>
+          {friendList.length > 0 ? (
+            <ul>
+              {friendList.map((friend, index) => (
+                <li key={index}>
+                  <div className="friend-info">
+                    <span>{friend.username}</span>
+                  </div>
+                  <div className="streak-badge">
+                    <span className="streak-icon">🔥</span>
+                    <span className="streak-count">{friend.streak} days</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No friends added yet</p>
+          )}
+        </div>
       </div>
     </div>
   );
