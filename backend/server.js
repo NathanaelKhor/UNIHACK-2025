@@ -68,6 +68,8 @@ app.post("/api/users", async (req, res) => {
       password,
       streak: 0, // Initialize streak
       friends: [], // Initialize friends
+      promptDate: null,
+      dailyDone: false
     });
     res
       .status(201)
@@ -133,19 +135,41 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-app.get("/api/kindness", async (req, res) => {
+app.post("/api/kindness", async (req, res) => {
+  const { username, password, streak } = req.body;
+  console.log("Generating good deed for user (backend):", username);
   try {
+    const querySnapshot = await db
+      .collection("users")
+      .where("username", "==", username)
+      .get();
+
+    if (querySnapshot.empty) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const userDoc = querySnapshot.docs[0];
+    const userData = userDoc.data();
+
+    if (userData.password !== password) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
     console.log(`Generating kindness act...`);
     const { result, promptDate } = await createGoodDeed(); // Call the function to get a kindness act
     
     const currentDate = new Date();
-
-    console.log("promptDate is", promptDate);
-    
+    currentDate.setHours(0, 0, 0, 0); // remove hours
+    console.log(userData.promptDate)
+    const dayDifference = Math.floor((new Date() - userData.promptDate.toDate()) / (1000 * 3600 * 24)); // Calculate whole days difference
+    const newAssignedDate = currentDate;
+    await userDoc.ref.update({
+      promptDate: newAssignedDate
+    });
+  
     const nextDay = new Date(promptDate);
     nextDay.setHours(0, 0, 0, 0);
     nextDay.setDate(promptDate.getDate() + 1);
-    console.log(nextDay);
+
     const promptGenerated = false;
 
     if (currentDate.getTime() !== nextDay.getTime() && promptGenerated == false) {
@@ -154,7 +178,12 @@ app.get("/api/kindness", async (req, res) => {
       console.log("error: cannot generate more than one act of kindness a day");
     };
 
-
+// Now you can use dayDifference to compare correctly
+    if (dayDifference >= 1 && userData.streak !== 1) {
+      await userDoc.ref.update({
+        streak: 0,  // Reset to 1 or 0 if desired
+      });
+    } 
 
   } catch (error) {
     console.error("Error fetching kindness act:", error);
@@ -184,16 +213,45 @@ app.post("/api/completeGoodDeed", async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    const newStreak = (userData.streak || 0) + 1;
+    const currentDate = new Date();
+    const promptDate = userData.promptDate ? userData.promptDate.toDate() : null;
 
-    await userDoc.ref.update({
-      streak: newStreak,
-    });
+    if (!promptDate) {
+      return res.status(400).json({ error: "No prompt date found for user" });
+    }
 
-    return res.status(200).json({
-      message: "Good deed completed successfully!",
-      streak: newStreak,
-    });
+    // Calculate the difference in days between currentDate and promptDate
+    const timeDiff = new Date() - promptDate;
+    const dayDifference = timeDiff / (1000 * 3600 * 24); // Convert ms to days
+
+
+    if (dayDifference >= 2) {
+      // Reset streak to 1 or 0 (based on your requirement) and mark daily done as true
+      await userDoc.ref.update({
+        streak: 1,  // Reset to 1 (or 0 if desired)
+        dailyDone: true
+      });
+    
+      return res.status(200).json({
+        message: "Good deed completed successfully, streak reset.",
+        streak: 1, // Ensure streak is sent as 1 if reset
+        dailyDone: true
+      });
+    } else {
+      // Increment streak if less than 2 days
+      const newStreak = userData.streak + 1;
+      
+      await userDoc.ref.update({
+        streak: newStreak,
+        dailyDone: true
+      });
+    
+      return res.status(200).json({
+        message: "Good deed completed successfully!",
+        streak: newStreak,
+        dailyDone: true
+      });
+    }
   } catch (error) {
     console.error("Error updating streak:", error);
     return res.status(500).json({ error: "Failed to update streak" });

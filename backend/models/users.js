@@ -8,6 +8,8 @@ function createUser(username, password) {
     password,
     streak: 0, 
     friends: [],
+    promptDate: null,
+    dailyDone: false
   };
 }
 

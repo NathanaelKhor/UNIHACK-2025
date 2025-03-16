@@ -17,10 +17,33 @@ const GoodDeed = () => {
 
   // This code tries to get the kindness from backend API
   const fetchKindness = async () => {
+    if (!user) {
+      console.error("No user logged in");
+      return;
+    }
     setLoading(true);
     setError(null);
+    console.log(
+      "Generating good deed request for user:",
+      user.username
+    );
     try {
-      const response = await fetch("http://localhost:5001/api/kindness");
+      console.log("we will now try to connect to the backend");
+      const response = await fetch(
+        "http://localhost:5001/api/kindness",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: user.username,
+            password: user.password,
+            promptGenerated: user.promptGenerated
+
+          }),
+        }
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch kindness act");
       }
@@ -64,6 +87,7 @@ const GoodDeed = () => {
             username: user.username,
             password: user.password,
             streak: user.streak || 0,
+            dailyDone: user.dailyDone
           }),
         }
       );
