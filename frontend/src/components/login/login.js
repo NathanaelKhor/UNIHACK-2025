@@ -33,6 +33,7 @@ const Login = () => {
           username: data.username,
           password: data.password,
           streak: data.streak || 0,
+          friends: data.friends || [],
         };
         setUser(userData);
         navigate("/gooddeed");

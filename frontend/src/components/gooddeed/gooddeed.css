@@ -73,3 +73,9 @@ body, .container, .card, .card-content, .title, .message, .error-message {
 .button:hover {
   background: var(--button-hover);
 }
+
+.button:disabled {
+  background-color: #ccc; /* Light grey background for disabled state */
+  color: #666; /* Dimmed text color */
+  cursor: not-allowed; /* Shows "not-allowed" cursor */
+}

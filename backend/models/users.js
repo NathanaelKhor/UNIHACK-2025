@@ -6,7 +6,8 @@ function createUser(username, password) {
   return {
     username,
     password,
-    streak: 0, // Initialize streak to 0 for new users
+    streak: 0, 
+    friends: [],
   };
 }
 

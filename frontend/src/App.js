@@ -18,6 +18,7 @@ import GoodDeed from "./components/gooddeed/gooddeed";
 import Register from "./components/register/register";
 import { UserContext, UserProvider, useUser } from "./context/UserContext";
 import Streak from "./components/streak/streak"
+import Friends from "./components/friends/friends";
 
 const ProtectedRoute = ({ element }) => {
   const { user } = useUser();
@@ -103,44 +104,25 @@ function App() {
     return <div className="App">Loading...</div>;
   }
 
-  if (user) {
-    return (
-      <div className="App">
-        <Router>
-          <Navbar />
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route
-              path="/gooddeed"
-              element={<ProtectedRoute element={<GoodDeed />} />}
-            />
-            <Route path="/" element={<Navigate to="/gooddeed" />} />
-            <Route path="/streak" element={<Streak />}></Route>
-          </Routes>
-        </Router>
-      </div>
-    );
-  }
-
- else{
-    return (
-      <div className="App">
-        <Router>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route
-              path="/gooddeed"
-              element={<ProtectedRoute element={<GoodDeed />} />}
-            />
-            <Route path="/" element={<Navigate to="/gooddeed" />} />
-            <Route path="/streak" element={<Streak />}></Route>
-          </Routes>
-        </Router>
-      </div>
+  return (
+    <div className="App">
+      <title>Butter Butter</title>
+      <Router>
+        <Navbar />
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/gooddeed"
+            element={<ProtectedRoute element={<GoodDeed />} />}
+          />
+          <Route path="/" element={<Navigate to="/gooddeed" />} />
+          <Route path="/streak" element={<Streak />}></Route>
+          <Route path="/friends" element={<Friends />} />
+        </Routes>
+      </Router>
+    </div>
   );
-}
 }
 
 export default App;

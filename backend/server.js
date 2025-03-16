@@ -67,6 +67,7 @@ app.post("/api/users", async (req, res) => {
       username,
       password,
       streak: 0, // Initialize streak
+      friends: [], // Initialize friends
     });
     res
       .status(201)
@@ -82,7 +83,6 @@ app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
   console.log("Login-Request: " + req.body);
   try {
-    // Check if user exists in Firebase Authentication
     const userSnapshot = await db
       .collection("users")
       .where("username", "==", username)
@@ -95,17 +95,38 @@ app.post("/api/login", async (req, res) => {
     const user = userSnapshot.docs[0].data();
     if (user.password !== password) {
       return res.status(400).json({ error: "Invalid username or password." });
-    } else {
-      return res
-        .status(200)
-        .json({
-          message: "Login successful!",
-          UserId: userSnapshot.docs[0].id,
-          username: user.username,
-          password: user.password,
-          streak: user.streak,
-        });
     }
+
+    // Fetch friends' data including streaks
+    const friendsList = await Promise.all(
+      (user.friends || []).map(async (friendName) => {
+        const friendDoc = await db
+          .collection("users")
+          .where("username", "==", friendName)
+          .get();
+
+        if (!friendDoc.empty) {
+          const friend = friendDoc.docs[0].data();
+          return {
+            username: friend.username,
+            streak: friend.streak || 0,
+          };
+        }
+        return null;
+      })
+    );
+
+    // Filter out any null values from the friends list
+    const validFriends = friendsList.filter((friend) => friend !== null);
+
+    return res.status(200).json({
+      message: "Login successful!",
+      UserId: userSnapshot.docs[0].id,
+      username: user.username,
+      password: user.password,
+      streak: user.streak,
+      friends: validFriends,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "An error occurred while logging in." });
@@ -125,10 +146,10 @@ app.get("/api/kindness", async (req, res) => {
     nextDay.setHours(0, 0, 0, 0);
     nextDay.setDate(promptDate.getDate() + 1);
     console.log(nextDay);
-  
+    const promptGenerated = false;
 
-    if (currentDate.getTime() !== nextDay.getTime()) {
-      res.json({ act: result });
+    if (currentDate.getTime() !== nextDay.getTime() && promptGenerated == false) {
+      res.json({ act: result, promptGenerated: true });
     } else {
       console.log("error: cannot generate more than one act of kindness a day");
     };
@@ -176,6 +197,95 @@ app.post("/api/completeGoodDeed", async (req, res) => {
   } catch (error) {
     console.error("Error updating streak:", error);
     return res.status(500).json({ error: "Failed to update streak" });
+  }
+});
+
+app.post("/api/addFriend", async (req, res) => {
+  const { username, friendUsername } = req.body;
+  console.log("Adding friend for user:", username, "Friend:", friendUsername);
+
+  try {
+    if (username === friendUsername) {
+      return res.status(400).json({ error: "Cannot add yourself as a friend" });
+    }
+
+    const userSnapshot = await db
+      .collection("users")
+      .where("username", "==", username)
+      .get();
+
+    if (userSnapshot.empty) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const friendSnapshot = await db
+      .collection("users")
+      .where("username", "==", friendUsername)
+      .get();
+
+    if (friendSnapshot.empty) {
+      return res.status(404).json({ error: "Friend not found" });
+    }
+
+    const userDoc = userSnapshot.docs[0];
+    const friendDoc = friendSnapshot.docs[0];
+    const userData = userDoc.data();
+    const friendData = friendDoc.data();
+
+    if (!userData.friends) {
+      userData.friends = [];
+    }
+    if (!friendData.friends) {
+      friendData.friends = [];
+    }
+
+    if (userData.friends.includes(friendUsername)) {
+      return res.status(400).json({ error: "Friend already added" });
+    }
+
+    userData.friends.push(friendUsername);
+    friendData.friends.push(username);
+
+    await userDoc.ref.update({
+      friends: userData.friends,
+    });
+
+    await friendDoc.ref.update({
+      friends: friendData.friends,
+    });
+
+    // Fetch updated friends' data including streaks
+    const friendsList = await Promise.all(
+      userData.friends.map(async (friendName) => {
+        const friendDoc = await db
+          .collection("users")
+          .where("username", "==", friendName)
+          .get();
+
+        if (!friendDoc.empty) {
+          const friend = friendDoc.docs[0].data();
+          return {
+            username: friend.username,
+            streak: friend.streak || 0,
+          };
+        }
+        return null;
+      })
+    );
+
+    // Filter out any null values from the friends list
+    const validFriends = friendsList.filter((friend) => friend !== null);
+
+    return res.status(200).json({
+      message: "Friend added successfully!",
+      username: userData.username,
+      password: userData.password,
+      streak: userData.streak,
+      userFriends: validFriends,
+    });
+  } catch (error) {
+    console.error("Error adding friend:", error);
+    return res.status(500).json({ error: "Failed to add friend" });
   }
 });
 
