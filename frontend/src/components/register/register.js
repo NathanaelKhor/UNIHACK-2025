@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import "./register.css"; // Ensure the file exists in the same directory
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("")
+   const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent form from reloading the page
@@ -28,6 +30,7 @@ const Register = () => {
             alert('Error creating user: ' + data.error);
         } else {
             alert('User created successfully!');
+            navigate('/login');
             // Redirect to a new page or perform other actions
             // window.location.href = 'dashboard.html'; // Uncomment to redirect to another page
         }
@@ -37,12 +40,13 @@ const Register = () => {
         alert('An error occurred while creating the user.');
     });
   }
-
+  
   return (
-    <div className="login-container">
-      <div className="login-box">
-      <h2>Register</h2>
+    <div className="register-container">
+      <div className="register-box">
+      
       <form onSubmit={handleSubmit}>
+      <h2>Register</h2>
         <label>Username:</label>
         <input
           type="text"
@@ -50,6 +54,7 @@ const Register = () => {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
+        <label>Password:</label>
         <input 
           type="text"
           id="password"
@@ -58,8 +63,8 @@ const Register = () => {
         />
 
         <button type="submit">Register</button>
+        <a href="login">Log-in Instead</a>
       </form>
-      <a href="login">Log-in Instead</a>
       </div>
     </div>
   );
