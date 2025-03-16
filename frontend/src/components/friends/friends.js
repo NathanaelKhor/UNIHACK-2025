@@ -61,21 +61,22 @@ const Friends = () => {
   return (
     <div className="login-container">
       <div className="login-box">
-        <h2>Add Friend</h2>
+        <h2 className="text header">Add Friend</h2>
         <form onSubmit={handleSubmit}>
-          <label>Username:</label>
+          <label className="text">Username:</label>
           <input
+            className="friend-input"
             type="text"
             id="friendUsername"
             value={friendUsername}
             onChange={(e) => setFriendUsername(e.target.value)}
             placeholder="Enter friend's username"
           />
-          <button type="submit">Add Friend</button>
+          <button className="add-friend-button"  type="submit">Add Friend</button>
         </form>
 
         <div className="friends-list">
-          <h3>Your Friends</h3>
+          <h3 className="text header">Your Friends</h3>
           {friendList.length > 0 ? (
             <ul>
               {friendList.map((friend, index) => (
@@ -85,13 +86,13 @@ const Friends = () => {
                   </div>
                   <div className="streak-badge">
                     <span className="streak-icon">🔥</span>
-                    <span className="streak-count">{friend.streak} days</span>
+                    <span className="streak-count text">{friend.streak} days</span>
                   </div>
                 </li>
               ))}
             </ul>
           ) : (
-            <p>No friends added yet</p>
+            <p className="text">No friends added yet</p>
           )}
         </div>
       </div>

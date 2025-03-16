@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import "./register.css"; // Ensure the file exists in the same directory
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("")
+   const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent form from reloading the page
@@ -28,6 +30,7 @@ const Register = () => {
             alert('Error creating user: ' + data.error);
         } else {
             alert('User created successfully!');
+            navigate('/login');
             // Redirect to a new page or perform other actions
             // window.location.href = 'dashboard.html'; // Uncomment to redirect to another page
         }
