@@ -18,6 +18,7 @@ import GoodDeed from "./components/gooddeed/gooddeed";
 import Register from "./components/register/register";
 import { UserContext, UserProvider, useUser } from "./context/UserContext";
 import Streak from "./components/streak/streak"
+import Friends from "./components/friends/friends";
 
 const ProtectedRoute = ({ element }) => {
   const { user } = useUser();
@@ -105,6 +106,7 @@ function App() {
 
   return (
     <div className="App">
+      <title>Butter Butter</title>
       <Router>
         <Navbar />
         <Routes>
@@ -116,6 +118,7 @@ function App() {
           />
           <Route path="/" element={<Navigate to="/gooddeed" />} />
           <Route path="/streak" element={<Streak />}></Route>
+          <Route path="/friends" element={<Friends />} />
         </Routes>
       </Router>
     </div>
