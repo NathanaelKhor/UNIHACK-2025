@@ -2,6 +2,7 @@
 const express = require("express");
 const cors = require("cors");
 const createGoodDeed = require("./models/good-deed");
+// const generateCurrentDate = require("./models/good-deed");
 const dotenv = require("dotenv");
 
 const { google } = require("googleapis");
@@ -114,12 +115,31 @@ app.post("/api/login", async (req, res) => {
 app.get("/api/kindness", async (req, res) => {
   try {
     console.log(`Generating kindness act...`);
-    const { result } = await createGoodDeed(); // Call the function to get a kindness act
-    res.json({ act: result });
+    const { result, promptDate } = await createGoodDeed(); // Call the function to get a kindness act
+    
+    const currentDate = new Date();
+
+    console.log("promptDate is", promptDate);
+    
+    const nextDay = new Date(promptDate);
+    nextDay.setHours(0, 0, 0, 0);
+    nextDay.setDate(promptDate.getDate() + 1);
+    console.log(nextDay);
+  
+
+    if (currentDate.getTime() !== nextDay.getTime()) {
+      res.json({ act: result });
+    } else {
+      console.log("error: cannot generate more than one act of kindness a day");
+    };
+
+
+
   } catch (error) {
     console.error("Error fetching kindness act:", error);
     res.status(500).json({ error: "Failed to generate kindness act." });
   }
+
 });
 
 app.post("/api/completeGoodDeed", async (req, res) => {
