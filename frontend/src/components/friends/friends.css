@@ -1,0 +1,48 @@
+.friends-list {
+  margin-top: 20px;
+}
+
+.friends-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.friends-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  margin: 8px 0;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.friends-list li:hover {
+  background-color: #ebebeb;
+}
+
+.friend-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.streak-badge {
+  background-color: #ffb347;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.streak-badge .streak-icon {
+  font-size: 1.1em;
+}
+
+.streak-count {
+  font-weight: bold;
+}
